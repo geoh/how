@@ -1,4 +1,4 @@
-module github.com/yourusername/how
+module github.com/geoh/how
 
 go 1.24.7
 

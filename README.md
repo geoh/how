@@ -39,13 +39,13 @@ Think of it as a weekend hack.
 Requires Go 1.21 or later:
 
 ```bash
-go install github.com/yourusername/how/cmd/how@latest
+go install github.com/geoh/how/cmd/how@latest
 ```
 
 Or clone and build locally:
 
 ```bash
-git clone https://github.com/yourusername/how.git
+git clone https://github.com/geoh/how.git
 cd how
 go build -o how ./cmd/how
 # Move to your PATH, e.g.:

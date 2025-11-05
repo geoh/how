@@ -7,11 +7,11 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/yourusername/how/internal/api"
-	"github.com/yourusername/how/internal/config"
-	"github.com/yourusername/how/internal/context"
-	"github.com/yourusername/how/internal/ui"
-	"golang.design/x/clipboard"
+	"github.com/geoh/how/internal/api"
+	"github.com/geoh/how/internal/clipboard"
+	"github.com/geoh/how/internal/config"
+	"github.com/geoh/how/internal/context"
+	"github.com/geoh/how/internal/ui"
 )
 
 func main() {
@@ -176,8 +176,11 @@ RESPONSE:
 	}
 
 	// Copy to clipboard
-	if err := clipboard.Init(); err == nil {
-		clipboard.Write(clipboard.FmtText, []byte(fullCommand))
+	if err := clipboard.CopyToClipboard(fullCommand); err != nil {
+		// Only show clipboard error in verbose mode or if DISPLAY is set
+		if os.Getenv("DISPLAY") != "" || os.Getenv("HOW_DEBUG") != "" {
+			fmt.Fprintf(os.Stderr, "Warning: Could not copy to clipboard: %v\n", err)
+		}
 	}
 
 	// Log to history
