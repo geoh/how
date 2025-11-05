@@ -4,7 +4,7 @@
  <h1 align="center">How-CLI</h1>
     <p align="center">A Terminal-Based Assistant for Generating Shell Commands</p>
 
-**How-CLI** is a terminal-based assistant that generates precise shell commands for any task you ask. Powered by Google Gemini’s generative AI, it provides context-aware, executable shell commands tailored to your current environment.
+**How-CLI** is a terminal-based assistant that generates precise shell commands for any task you ask. Powered by Google Gemini's generative AI, it provides context-aware, executable shell commands tailored to your current environment.
 
 ---
 
@@ -23,19 +23,33 @@
 ### ⚠️ Disclaimer:
 
 ```
-Yeah, I know... It’s a Gemini wrapper.
+Yeah, I know... It's a Gemini wrapper.
 I know it's not the next Warp AI terminal or some fancy LLM-based shell integration with auto-completion and context persistence...
-I know it's “yet another CLI tool” 
+I know it's "yet another CLI tool"
 and yes, I'm painfully aware that wrapping an API and printing stuff in the terminal isn't groundbreaking computer science...
 But here's the thing: I made How-CLI because it was fun and quick to build...
-It's not meant to change the world. It’s meant to make typing "how to do X in bash" a little more amusing..
+It's not meant to change the world. It's meant to make typing "how to do X in bash" a little more amusing..
 Think of it as a weekend hack.
 ```
 
 ## Installation
 
+### From Source
+
+Requires Go 1.21 or later:
+
 ```bash
-pip install how-cli-assist
+go install github.com/yourusername/how/cmd/how@latest
+```
+
+Or clone and build locally:
+
+```bash
+git clone https://github.com/yourusername/how.git
+cd how
+go build -o how ./cmd/how
+# Move to your PATH, e.g.:
+sudo mv how /usr/local/bin/
 ```
 
 ## Demo
@@ -76,3 +90,9 @@ how --api-key YOUR_GEMINI_API_KEY_HERE
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Tribute
+
+This Go implementation is a port of the original Python project [How-CLI by Adem Kouki](https://github.com/Ademking/how). All credit for the concept and design goes to the original author. This port aims to provide the same functionality with the performance and deployment benefits of Go.
