@@ -79,7 +79,7 @@ type promptFeedback struct {
 func GenerateResponse(apiKey, prompt string, maxRetries int) (string, error) {
 	modelName := os.Getenv("HOW_MODEL")
 	if modelName == "" {
-		modelName = "gemini-2.0-flash-exp"
+		modelName = "gemini-2.5-flash"
 	}
 
 	// Remove "models/" prefix if present in environment variable
