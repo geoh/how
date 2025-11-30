@@ -37,7 +37,18 @@ func copyWithFallback(text string) error {
 }
 
 // copyLinux tries various Linux clipboard methods
-func copyLinux(text string) error {
+func copyLinux(text string) error {	// In WSL, use Windows clip.exe which copies to Windows clipboard
+	if isWSL() {
+		// Try clip.exe from PATH first
+		if err := tryCommand("clip.exe", []string{}, text); err == nil {
+			return nil
+		}
+		// Try common full path if not in PATH
+		if err := tryCommand("/mnt/c/Windows/System32/clip.exe", []string{}, text); err == nil {
+			return nil
+		}
+	}
+
 	// Try xclip first
 	if err := tryCommand("xclip", []string{"-selection", "clipboard"}, text); err == nil {
 		return nil
@@ -88,6 +99,20 @@ func isSSH() bool {
 	return os.Getenv("SSH_CLIENT") != "" || os.Getenv("SSH_TTY") != "" || os.Getenv("SSH_CONNECTION") != ""
 }
 
+// isWSL checks if we're running in Windows Subsystem for Linux
+func isWSL() bool {
+	// Check for WSL-specific environment variable
+	if os.Getenv("WSL_DISTRO_NAME") != "" {
+		return true
+	}
+	// Check /proc/version for Microsoft/WSL indicators
+	if data, err := os.ReadFile("/proc/version"); err == nil {
+		version := strings.ToLower(string(data))
+		return strings.Contains(version, "microsoft") || strings.Contains(version, "wsl")
+	}
+	return false
+}
+
 // copyWithOSC52 uses OSC 52 escape sequence for SSH clipboard
 func copyWithOSC52(text string) error {
 	// OSC 52 is supported by many modern terminals including Windows Terminal
@@ -98,20 +123,20 @@ func copyWithOSC52(text string) error {
 
 	// Base64 encode the text
 	encoded := base64Encode(text)
-	
+
 	// Send OSC 52 escape sequence
 	fmt.Printf("\033]52;c;%s\033\\", encoded)
-	
+
 	return nil
 }
 
 // Simple base64 encoding without importing encoding/base64
 func base64Encode(data string) string {
 	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-	
+
 	input := []byte(data)
 	var result strings.Builder
-	
+
 	for i := 0; i < len(input); i += 3 {
 		var b1, b2, b3 byte
 		b1 = input[i]
@@ -121,22 +146,22 @@ func base64Encode(data string) string {
 		if i+2 < len(input) {
 			b3 = input[i+2]
 		}
-		
+
 		result.WriteByte(chars[b1>>2])
 		result.WriteByte(chars[((b1&0x03)<<4)|((b2&0xf0)>>4)])
-		
+
 		if i+1 < len(input) {
 			result.WriteByte(chars[((b2&0x0f)<<2)|((b3&0xc0)>>6)])
 		} else {
 			result.WriteByte('=')
 		}
-		
+
 		if i+2 < len(input) {
 			result.WriteByte(chars[b3&0x3f])
 		} else {
 			result.WriteByte('=')
 		}
 	}
-	
+
 	return result.String()
 }
